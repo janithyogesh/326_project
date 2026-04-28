@@ -7,9 +7,8 @@ services:
     ports:
       - "1883:1883"
       - "9001:9001"
-    command: >-
-      sh -c "printf 'allow_anonymous true\nlistener 1883\nlistener 9001\nprotocol websockets\n' > /mosquitto/config/mosquitto.conf
-      && mosquitto -c /mosquitto/config/mosquitto.conf"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   python-app:
     build:
@@ -25,7 +24,9 @@ services:
     restart: unless-stopped
 
   nodered:
-    image: nodered/node-red:latest
+    build:
+      context: ./node-red
+      dockerfile: Dockerfile
     container_name: nodered
     ports:
       - "1880:1880"
